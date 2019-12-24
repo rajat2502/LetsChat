@@ -20,7 +20,7 @@ class ChatListComponent extends Component {
     }
 
     selectChat = (index) => {
-        console.log(index);
+        this.props.selectChatFn(index);
     }
 
     render() {
@@ -37,7 +37,7 @@ class ChatListComponent extends Component {
                             className={classes.newChatBtn}
                             onClick={this.newChat}
                         >
-                            New Chat
+                            New Message
                         </Button>
                         <List>
                             {
@@ -86,7 +86,7 @@ class ChatListComponent extends Component {
                         fullWidth
                         className={classes.newChatBtn}
                         onClick={this.newChat}>
-                    New Chat
+                    New Message
                     </Button>
                     <List></List>
                 </main>

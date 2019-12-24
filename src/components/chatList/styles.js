@@ -1,7 +1,7 @@
 const styles = theme => ({
     root: {
       backgroundColor: theme.palette.background.paper,
-      height: '100%',
+      height: 'calc(100% - 35px)',
       position: 'absolute',
       left: '0',
       width: '300px',
