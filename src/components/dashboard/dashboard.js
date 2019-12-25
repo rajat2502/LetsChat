@@ -8,6 +8,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import ChatListComponent from '../chatList/chatList';
 import ChatViewComponent from '../chatView/chatView';
 import ChatTextBoxComponent from '../chattextbox/chatTextBox';
+import NewChatComponent from '../newChat/newChat';
 
 import styles from './styles';
 
@@ -70,6 +71,36 @@ class DashboardComponent extends Component {
         }
     }
 
+    goToChat = async (docKey, message) => {
+        const usersInChat = docKey.split(':');
+        const chat = this.state.chats.find(_chat => usersInChat.every(_user => _chat.users.includes(_user)));
+        this.setState({
+            newChatFormVisible: false
+        })
+        await this.selectChat(this.state.chats.indexOf(chat));
+        this.submitMessge(message);
+    }
+
+    newChatSubmit = async (chatObj) => {
+        const docKey = this.buildDocKey(chatObj.sendTo);
+        await firebase
+            .firestore()
+            .collection('chats')
+            .doc(docKey)
+            .set({
+                receiverHasRead: false,
+                users: [this.state.email, chatObj.sendTo],
+                messages: [{
+                    message: chatObj.message,
+                    sender: this.state.email
+                }]
+            })
+        this.setState({
+            newChatFormVisible: false
+        })
+        this.selectChat(this.state.chats.length - 1);
+    } 
+
     componentDidMount = () => {
         firebase.auth().onAuthStateChanged(async _usr => {
             if(!_usr){
@@ -115,6 +146,11 @@ class DashboardComponent extends Component {
                 {
                     selectedChat !== null && !newChatFormVisible ? 
                     <ChatTextBoxComponent messageReadFn={this.messageRead} submitMessageFn={this.submitMessge} />
+                    : null
+                }
+                {
+                    newChatFormVisible ? 
+                    <NewChatComponent goToChatFn={this.goToChat} newChatSubmitFn={this.newChatSubmit}  />
                     : null
                 }
                 <Button onClick={this.signOut} className={classes.signOutBtn}>Sign Out</Button>
